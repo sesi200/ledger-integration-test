@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "canisters": {
+    "counter_rs": {
+      "type": "custom",
+      "candid": "src/counter_rs/counter.did",
+      "wasm": "target/wasm32-unknown-unknown/release/counter_rs-opt.wasm",
+      "build": "sh build.sh counter_rs"
+    },
+    "inter_rs": {
+      "type": "custom",
+      "candid": "src/inter_rs/lib.did",
+      "wasm": "target/wasm32-unknown-unknown/release/inter_rs-opt.wasm",
+      "build": "sh build.sh inter_rs",
+      "dependencies": [
+        "counter_rs",
+        "ledger"
+      ]
+    },
+    "ledger": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/d87954601e4b22972899e9957e800406a0a6b929/rs/rosetta-api/icp_ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/d87954601e4b22972899e9957e800406a0a6b929/canisters/ledger-canister.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+        }
+      }
+    }
+  },
+  "defaults": {
+    "build": {
+      "output": "canisters/"
+    }
+  }
+}

@@ -1,28 +1,26 @@
 set -e
 
-MINTER_ACCOUNT_ID=$(dfx ledger account-id)
-DEFAULT_ACCOUNT_ID=$(dfx ledger account-id)
+MINTER=$(dfx --identity default identity get-principal)
+DEFAULT=$(dfx --identity default identity get-principal)
+TOKEN_SYMBOL=TOK
+TOKEN_NAME="fancy_token_name"
+TRANSFER_FEE=100
+PRE_MINTED_TOKENS=100000000000
 
-dfx deploy --specified-id ryjl3-tyaaa-aaaaa-aaaba-cai ledger --argument "
-  (variant {
-    Init = record {
-      minting_account = \"$MINTER_ACCOUNT_ID\";
-      initial_values = vec {
-        record {
-          \"$DEFAULT_ACCOUNT_ID\";
-          record {
-            e8s = 10_000_000_000 : nat64;
-          };
-        };
-      };
-      send_whitelist = vec {};
-      transfer_fee = opt record {
-        e8s = 10_000 : nat64;
-      };
-      token_symbol = opt \"TGC\";
-      token_name = opt \"TGC token\";
-    }
-  })
-"
-
+dfx deploy ledger --argument "(variant {Init = 
+record {
+     token_symbol = \"${TOKEN_SYMBOL}\";
+     token_name = \"${TOKEN_NAME}\";
+     minting_account = record { owner = principal \"${MINTER}\" };
+     transfer_fee = ${TRANSFER_FEE};
+     metadata = vec {};
+     initial_balances = vec { record { record { owner = principal \"${DEFAULT}\"; }; ${PRE_MINTED_TOKENS}; }; };
+     archive_options = record {
+         num_blocks_to_archive = 1000000000;
+         trigger_threshold = 1000000000;
+         controller_id = principal \"${DEFAULT}\";
+     };
+     feature_flags = opt record {icrc2 = true;};
+ }
+})"
 dfx deploy

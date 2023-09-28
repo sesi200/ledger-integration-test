@@ -4,7 +4,7 @@
 use candid::{self, CandidType, Deserialize, Principal, Encode, Decode};
 use ic_cdk::api::call::CallResult as Result;
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum MetadataValue {
   Int(candid::Int),
   Nat(candid::Nat),
@@ -13,65 +13,65 @@ pub enum MetadataValue {
 }
 
 pub type Subaccount = serde_bytes::ByteBuf;
-#[derive(CandidType, Deserialize)]
-pub struct Account { owner: Principal, subaccount: Option<Subaccount> }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct Account { pub owner: Principal, pub subaccount: Option<Subaccount> }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum ChangeFeeCollector { SetTo(Account), Unset }
 
-#[derive(CandidType, Deserialize)]
-pub struct FeatureFlags { icrc2: bool }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct FeatureFlags { pub icrc2: bool }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct UpgradeArgs {
-  token_symbol: Option<String>,
-  transfer_fee: Option<candid::Nat>,
-  metadata: Option<Vec<(String,MetadataValue,)>>,
-  maximum_number_of_accounts: Option<u64>,
-  accounts_overflow_trim_quantity: Option<u64>,
-  change_fee_collector: Option<ChangeFeeCollector>,
-  max_memo_length: Option<u16>,
-  token_name: Option<String>,
-  feature_flags: Option<FeatureFlags>,
+  pub token_symbol: Option<String>,
+  pub transfer_fee: Option<candid::Nat>,
+  pub metadata: Option<Vec<(String,MetadataValue,)>>,
+  pub maximum_number_of_accounts: Option<u64>,
+  pub accounts_overflow_trim_quantity: Option<u64>,
+  pub change_fee_collector: Option<ChangeFeeCollector>,
+  pub max_memo_length: Option<u16>,
+  pub token_name: Option<String>,
+  pub feature_flags: Option<FeatureFlags>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct InitArgsArchiveOptions {
-  num_blocks_to_archive: u64,
-  max_transactions_per_response: Option<u64>,
-  trigger_threshold: u64,
-  max_message_size_bytes: Option<u64>,
-  cycles_for_archive_creation: Option<u64>,
-  node_max_memory_size_bytes: Option<u64>,
-  controller_id: Principal,
+  pub num_blocks_to_archive: u64,
+  pub max_transactions_per_response: Option<u64>,
+  pub trigger_threshold: u64,
+  pub max_message_size_bytes: Option<u64>,
+  pub cycles_for_archive_creation: Option<u64>,
+  pub node_max_memory_size_bytes: Option<u64>,
+  pub controller_id: Principal,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct InitArgs {
-  decimals: Option<u8>,
-  token_symbol: String,
-  transfer_fee: candid::Nat,
-  metadata: Vec<(String,MetadataValue,)>,
-  minting_account: Account,
-  initial_balances: Vec<(Account,candid::Nat,)>,
-  maximum_number_of_accounts: Option<u64>,
-  accounts_overflow_trim_quantity: Option<u64>,
-  fee_collector_account: Option<Account>,
-  archive_options: InitArgsArchiveOptions,
-  max_memo_length: Option<u16>,
-  token_name: String,
-  feature_flags: Option<FeatureFlags>,
+  pub decimals: Option<u8>,
+  pub token_symbol: String,
+  pub transfer_fee: candid::Nat,
+  pub metadata: Vec<(String,MetadataValue,)>,
+  pub minting_account: Account,
+  pub initial_balances: Vec<(Account,candid::Nat,)>,
+  pub maximum_number_of_accounts: Option<u64>,
+  pub accounts_overflow_trim_quantity: Option<u64>,
+  pub fee_collector_account: Option<Account>,
+  pub archive_options: InitArgsArchiveOptions,
+  pub max_memo_length: Option<u16>,
+  pub token_name: String,
+  pub feature_flags: Option<FeatureFlags>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum LedgerArg { Upgrade(Option<UpgradeArgs>), Init(InitArgs) }
 
 pub type BlockIndex = candid::Nat;
-#[derive(CandidType, Deserialize)]
-pub struct GetBlocksArgs { start: BlockIndex, length: candid::Nat }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct GetBlocksArgs { pub start: BlockIndex, pub length: candid::Nat }
 
 pub type Map = Vec<(String,Box<Value>,)>;
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum Value {
   Int(candid::Int),
   Map(Map),
@@ -83,125 +83,130 @@ pub enum Value {
 }
 
 pub type Block = Box<Value>;
-#[derive(CandidType, Deserialize)]
-pub struct BlockRange { blocks: Vec<Block> }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct BlockRange { pub blocks: Vec<Block> }
 
 candid::define_function!(pub QueryBlockArchiveFn : (GetBlocksArgs) -> (
     BlockRange,
   ) query);
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct GetBlocksResponseArchivedBlocksItem {
-  callback: QueryBlockArchiveFn,
-  start: BlockIndex,
-  length: candid::Nat,
+  pub callback: QueryBlockArchiveFn,
+  pub start: BlockIndex,
+  pub length: candid::Nat,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct GetBlocksResponse {
-  certificate: Option<serde_bytes::ByteBuf>,
-  first_index: BlockIndex,
-  blocks: Vec<Block>,
-  chain_length: u64,
-  archived_blocks: Vec<GetBlocksResponseArchivedBlocksItem>,
+  pub certificate: Option<serde_bytes::ByteBuf>,
+  pub first_index: BlockIndex,
+  pub blocks: Vec<Block>,
+  pub chain_length: u64,
+  pub archived_blocks: Vec<GetBlocksResponseArchivedBlocksItem>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct DataCertificate {
-  certificate: Option<serde_bytes::ByteBuf>,
-  hash_tree: serde_bytes::ByteBuf,
+  pub certificate: Option<serde_bytes::ByteBuf>,
+  pub hash_tree: serde_bytes::ByteBuf,
 }
 
 pub type TxIndex = candid::Nat;
-#[derive(CandidType, Deserialize)]
-pub struct GetTransactionsRequest { start: TxIndex, length: candid::Nat }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct GetTransactionsRequest {
+  pub start: TxIndex,
+  pub length: candid::Nat,
+}
 
 pub type Timestamp = u64;
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct Burn {
-  from: Account,
-  memo: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: candid::Nat,
-  spender: Option<Account>,
+  pub from: Account,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: candid::Nat,
+  pub spender: Option<Account>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct Mint {
-  to: Account,
-  memo: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: candid::Nat,
+  pub to: Account,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: candid::Nat,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct Approve {
-  fee: Option<candid::Nat>,
-  from: Account,
-  memo: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: candid::Nat,
-  expected_allowance: Option<candid::Nat>,
-  expires_at: Option<Timestamp>,
-  spender: Account,
+  pub fee: Option<candid::Nat>,
+  pub from: Account,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: candid::Nat,
+  pub expected_allowance: Option<candid::Nat>,
+  pub expires_at: Option<Timestamp>,
+  pub spender: Account,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct Transfer {
-  to: Account,
-  fee: Option<candid::Nat>,
-  from: Account,
-  memo: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: candid::Nat,
-  spender: Option<Account>,
+  pub to: Account,
+  pub fee: Option<candid::Nat>,
+  pub from: Account,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: candid::Nat,
+  pub spender: Option<Account>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct Transaction {
-  burn: Option<Burn>,
-  kind: String,
-  mint: Option<Mint>,
-  approve: Option<Approve>,
-  timestamp: Timestamp,
-  transfer: Option<Transfer>,
+  pub burn: Option<Burn>,
+  pub kind: String,
+  pub mint: Option<Mint>,
+  pub approve: Option<Approve>,
+  pub timestamp: Timestamp,
+  pub transfer: Option<Transfer>,
 }
 
-#[derive(CandidType, Deserialize)]
-pub struct TransactionRange { transactions: Vec<Transaction> }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct TransactionRange { pub transactions: Vec<Transaction> }
 
 candid::define_function!(pub QueryArchiveFn : (GetTransactionsRequest) -> (
     TransactionRange,
   ) query);
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct GetTransactionsResponseArchivedTransactionsItem {
-  callback: QueryArchiveFn,
-  start: TxIndex,
-  length: candid::Nat,
+  pub callback: QueryArchiveFn,
+  pub start: TxIndex,
+  pub length: candid::Nat,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct GetTransactionsResponse {
-  first_index: TxIndex,
-  log_length: candid::Nat,
-  transactions: Vec<Transaction>,
-  archived_transactions: Vec<GetTransactionsResponseArchivedTransactionsItem>,
+  pub first_index: TxIndex,
+  pub log_length: candid::Nat,
+  pub transactions: Vec<Transaction>,
+  pub archived_transactions: Vec<
+    GetTransactionsResponseArchivedTransactionsItem
+  >,
 }
 
 pub type Tokens = candid::Nat;
-#[derive(CandidType, Deserialize)]
-pub struct StandardRecord { url: String, name: String }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct StandardRecord { pub url: String, pub name: String }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct TransferArg {
-  to: Account,
-  fee: Option<Tokens>,
-  memo: Option<serde_bytes::ByteBuf>,
-  from_subaccount: Option<Subaccount>,
-  created_at_time: Option<Timestamp>,
-  amount: Tokens,
+  pub to: Account,
+  pub fee: Option<Tokens>,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub from_subaccount: Option<Subaccount>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: Tokens,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum TransferError {
   GenericError{ message: String, error_code: candid::Nat },
   TemporarilyUnavailable,
@@ -213,28 +218,31 @@ pub enum TransferError {
   InsufficientFunds{ balance: Tokens },
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum TransferResult { Ok(BlockIndex), Err(TransferError) }
 
-#[derive(CandidType, Deserialize)]
-pub struct AllowanceArgs { account: Account, spender: Account }
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct AllowanceArgs { pub account: Account, pub spender: Account }
 
-#[derive(CandidType, Deserialize)]
-pub struct Allowance { allowance: candid::Nat, expires_at: Option<Timestamp> }
-
-#[derive(CandidType, Deserialize)]
-pub struct ApproveArgs {
-  fee: Option<candid::Nat>,
-  memo: Option<serde_bytes::ByteBuf>,
-  from_subaccount: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: candid::Nat,
-  expected_allowance: Option<candid::Nat>,
-  expires_at: Option<Timestamp>,
-  spender: Account,
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct Allowance {
+  pub allowance: candid::Nat,
+  pub expires_at: Option<Timestamp>,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
+pub struct ApproveArgs {
+  pub fee: Option<candid::Nat>,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub from_subaccount: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: candid::Nat,
+  pub expected_allowance: Option<candid::Nat>,
+  pub expires_at: Option<Timestamp>,
+  pub spender: Account,
+}
+
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum ApproveError {
   GenericError{ message: String, error_code: candid::Nat },
   TemporarilyUnavailable,
@@ -247,21 +255,21 @@ pub enum ApproveError {
   InsufficientFunds{ balance: candid::Nat },
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum ApproveResult { Ok(BlockIndex), Err(ApproveError) }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub struct TransferFromArgs {
-  to: Account,
-  fee: Option<Tokens>,
-  spender_subaccount: Option<Subaccount>,
-  from: Account,
-  memo: Option<serde_bytes::ByteBuf>,
-  created_at_time: Option<Timestamp>,
-  amount: Tokens,
+  pub to: Account,
+  pub fee: Option<Tokens>,
+  pub spender_subaccount: Option<Subaccount>,
+  pub from: Account,
+  pub memo: Option<serde_bytes::ByteBuf>,
+  pub created_at_time: Option<Timestamp>,
+  pub amount: Tokens,
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum TransferFromError {
   GenericError{ message: String, error_code: candid::Nat },
   TemporarilyUnavailable,
@@ -274,7 +282,7 @@ pub enum TransferFromError {
   InsufficientFunds{ balance: Tokens },
 }
 
-#[derive(CandidType, Deserialize)]
+#[derive(CandidType, Deserialize, Debug, PartialEq, Eq)]
 pub enum TransferFromResult { Ok(BlockIndex), Err(TransferFromError) }
 
 pub struct Ledger(pub Principal);
@@ -328,5 +336,5 @@ impl Ledger {
     (TransferFromResult,)
   > { ic_cdk::call(self.0, "icrc2_transfer_from", (arg0,)).await }
 }
-pub const CANISTER_ID : Principal = Principal::from_slice(&[128, 0, 0, 0, 0, 16, 0, 12, 1, 1]); // ajuq4-ruaaa-aaaaa-qaaga-cai
+pub const CANISTER_ID : Principal = Principal::from_slice(&[128, 0, 0, 0, 0, 16, 0, 1, 1, 1]); // bkyz2-fmaaa-aaaaa-qaaaq-cai
 pub const ledger : Ledger = Ledger(CANISTER_ID);

@@ -16,5 +16,5 @@ impl CounterRs {
     ic_cdk::call(self.0, "write", (arg0,)).await
   }
 }
-pub const CANISTER_ID : Principal = Principal::from_slice(&[128, 0, 0, 0, 0, 16, 0, 14, 1, 1]); // ahw5u-keaaa-aaaaa-qaaha-cai
+pub const CANISTER_ID : Principal = Principal::from_slice(&[128, 0, 0, 0, 0, 16, 0, 3, 1, 1]); // be2us-64aaa-aaaaa-qaabq-cai
 pub const counter_rs : CounterRs = CounterRs(CANISTER_ID);
